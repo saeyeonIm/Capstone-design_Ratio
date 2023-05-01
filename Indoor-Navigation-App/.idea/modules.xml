@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Indoor_Navigation_App.iml" filepath="$PROJECT_DIR$/.idea/modules/Indoor_Navigation_App.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Indoor_Navigation_App.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Indoor_Navigation_App.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Indoor_Navigation_App.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Indoor_Navigation_App.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Indoor_Navigation_App.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Indoor_Navigation_App.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Indoor_Navigation_App.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Indoor_Navigation_App.app.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdk/Indoor_Navigation_App.sdk.iml" filepath="$PROJECT_DIR$/.idea/modules/sdk/Indoor_Navigation_App.sdk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdk/Indoor_Navigation_App.sdk.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/sdk/Indoor_Navigation_App.sdk.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdk/Indoor_Navigation_App.sdk.main.iml" filepath="$PROJECT_DIR$/.idea/modules/sdk/Indoor_Navigation_App.sdk.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdk/Indoor_Navigation_App.sdk.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/sdk/Indoor_Navigation_App.sdk.unitTest.iml" />
+    </modules>
+  </component>
+</project>
