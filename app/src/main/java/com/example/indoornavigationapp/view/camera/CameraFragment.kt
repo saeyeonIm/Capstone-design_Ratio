@@ -26,6 +26,7 @@ import com.example.indoornavigationapp.databinding.FragmentCameraBinding
 import com.example.indoornavigationapp.listener.TagDetectionListener
 import com.example.indoornavigationapp.view.ApriltagCamera2View
 import com.example.indoornavigationapp.view.CameraBridgeViewBaseImpl
+import com.example.indoornavigationapp.view.opengl.MyGLSurfaceView
 import org.opencv.android.BaseLoaderCallback
 import org.opencv.android.CameraBridgeViewBase
 import org.opencv.android.LoaderCallbackInterface
@@ -37,7 +38,7 @@ class CameraFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCall
     CameraBridgeViewBaseImpl.MyCvCameraViewListener2, TagDetectionListener {
 
     var binding: FragmentCameraBinding? = null
-
+    private lateinit var glView: MyGLSurfaceView
     private var mOpenCvCameraView: ApriltagCamera2View? = null
     private val permissionList = Manifest.permission.CAMERA
     private var mSize: Size = Size(-1, -1)
@@ -118,6 +119,8 @@ class CameraFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCall
             binding?.relativeCoorTxt?.text = "상대좌표:\nx : ${viewModel.relativePos[0]}\ny : ${viewModel.relativePos[1]}\nz : ${viewModel.relativePos[2]}"
         }
 
+        glView = MyGLSurfaceView(requireContext())
+        binding?.openglContainer?.addView(glView)
             return binding?.root
     }
 
@@ -159,6 +162,8 @@ class CameraFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCall
     override fun onPause() {
         super.onPause()
         mOpenCvCameraView?.disableView()
+        glView.onPause()
+
     }
 
     override fun onResume() {
@@ -170,6 +175,7 @@ class CameraFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCall
             Log.d(TAG, "onResum :: OpenCV library found inside package. Using it!")
             mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS)
         }
+        glView.onResume()
     }
 
     override fun onTagDetect(aprilDetection: ArrayList<ApriltagDetection>) {
