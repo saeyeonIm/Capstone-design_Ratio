@@ -26,6 +26,7 @@ import com.example.indoornavigationapp.databinding.FragmentCameraBinding
 import com.example.indoornavigationapp.listener.TagDetectionListener
 import com.example.indoornavigationapp.view.ApriltagCamera2View
 import com.example.indoornavigationapp.view.CameraBridgeViewBaseImpl
+import com.example.indoornavigationapp.view.opengl.MyGLSurfaceView
 import org.opencv.android.BaseLoaderCallback
 import org.opencv.android.CameraBridgeViewBase
 import org.opencv.android.LoaderCallbackInterface
@@ -38,6 +39,7 @@ class CameraFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCall
 
     var binding: FragmentCameraBinding? = null
 
+    private var glView: MyGLSurfaceView? = null
     private var mOpenCvCameraView: ApriltagCamera2View? = null
     private val permissionList = Manifest.permission.CAMERA
     private var mSize: Size = Size(-1, -1)
@@ -117,6 +119,10 @@ class CameraFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCall
             binding?.absoluteCoorTxt?.text = "Tag Id : ${viewModel.relativePos[3].toInt()}\n절대좌표:\nx : ${it.first}\ny : ${it.second}"
             binding?.relativeCoorTxt?.text = "상대좌표:\nx : ${viewModel.relativePos[0]}\ny : ${viewModel.relativePos[1]}\nz : ${viewModel.relativePos[2]}"
         }
+
+        glView = MyGLSurfaceView(requireContext())
+
+        binding?.openglContainer?.addView(glView)
 
             return binding?.root
     }
