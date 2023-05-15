@@ -57,7 +57,7 @@ class MyGLRenderer : GLSurfaceView.Renderer {
         // 카메라 위치 설정(보기 매트릭스)
         // 이 행렬은 카메라가 (0, 0, 3)에 있고, 보고 있는 지점이 (0, 0, 0)에 있고, 위쪽이 (0, 1, 0)에 있는 것처럼 3차원 공간의 물체를 봅니다.
 //        Matrix.setLookAtM(viewMatrix, 0, 0f, 0f, 3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
-        Matrix.setLookAtM(viewMatrix, 0, 225.057f, 159.636f , 2000f, 225.057f, 159.636f, 0f, 0f, 1.0f, 0.0f)
+        Matrix.setLookAtM(viewMatrix, 0, realX, realY , realZ, realX, realY, 0f, 0f, 1.0f, 0.0f)
         // 투영 및 뷰 변환 계산
         Matrix.multiplyMM(vPMatrix, 0, projectionMatrix, 0, viewMatrix, 0)
 
