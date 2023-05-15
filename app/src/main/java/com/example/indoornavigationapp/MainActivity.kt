@@ -10,6 +10,15 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
 import apriltag.ApriltagNative
 import com.example.indoornavigationapp.databinding.ActivityMainBinding
+import com.example.indoornavigationapp.view.opengl.MapComponent
+import com.google.gson.Gson
+import org.json.JSONArray
+import org.json.JSONObject
+import java.io.InputStream
+import java.lang.Exception
+
+//var mapData: JSONArray = JSONArray()
+var mapComponentList: List<MapComponent> = emptyList()
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -40,6 +49,8 @@ class MainActivity : AppCompatActivity() {
         ApriltagNative.apriltag_native_init()
         ApriltagNative.apriltag_init("tagStandard41h12", 2, 4.0, 0.0, 1)
 
+        // 지도 구성 요소 리스트
+        mapComponentList = getMapComponentList()
     }
 
     companion object {
@@ -55,4 +66,31 @@ class MainActivity : AppCompatActivity() {
         val navController = binding.fragmentContainerView.getFragment<NavHostFragment>().navController
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
+
+    // Json 파일 읽어서 객체화하는 코드
+    private fun getMapComponentList(): List<MapComponent>{
+        val list = mutableListOf<MapComponent>()
+        val gson = Gson()
+        try {
+            val inputStream = assets.open("jsons/coordinate.json")
+            val buffer = ByteArray(inputStream.available())
+            inputStream.read(buffer)
+            inputStream.close()
+            val json = String(buffer, Charsets.UTF_8)
+
+            val jsonObject = JSONObject(json)
+            val jsonArray = jsonObject.getJSONArray("data")
+
+            for (index in 0 until jsonArray.length()) {
+                val mapComponent =
+                    gson.fromJson(jsonArray.get(index).toString(), MapComponent::class.java)
+                list.add(mapComponent)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return list
+    }
 }
+
+
