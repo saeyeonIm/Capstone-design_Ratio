@@ -1,73 +1,67 @@
 package com.example.indoornavigationapp.view.opengl
 
 import android.content.Context
-import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.view.MotionEvent
-import android.view.View
-import org.json.JSONObject
 import kotlin.math.sqrt
 
-var moveX: Float = 0f
-var moveY: Float = 0f
-var distance: Float = 0f
-
+// 초기 좌표 지점
+var realX: Float = 225.057f
+var realY: Float = 159.636f
+var realZ: Float = 100f
+val zoom: Float = 10f
+val moveSpeed: Float = 50f
 class MyGLSurfaceView(context: Context) : GLSurfaceView(context) {
-
     private val renderer: MyGLRenderer
-
-
     init {
-        // Create an OpenGL ES 2.0 context
+        // 버전 설정
         setEGLContextClientVersion(2)
 
         renderer = MyGLRenderer()
-        // Render the view only when there is a change in the drawing data
-//        renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
         setRenderer(renderer)
-
-        GLES20.glViewport(0, 0, 300, 300)
     }
-
-    override fun onTouchEvent(e: MotionEvent): Boolean {
-        // MotionEvent reports input details from the touch screen
-        // and other input controls. In this case, you are only
-        // interested in events where the touch position changed.
-
-        val x: Float = e.x
-        val y: Float = e.y
-
-        when (e.action) {
-            MotionEvent.ACTION_POINTER_DOWN ->{
-                if(e.pointerCount == 2){
-                    val x1 = e.getX(0)
-                    val y1 = e.getY(0)
-                    val x2 = e.getX(1)
-                    val y2 = e.getY(1)
-                    println("TEST")
-                    distance = sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1))
-                    println("($x1, $y1), ($x2, $y2), $distance")
-                }
-                requestRender()
+    var prevX = 0f
+    var prevY = 0f
+    var prevDistance = 0f
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        val x = event.x
+        val y = event.y
+        when(event.action){
+            MotionEvent.ACTION_DOWN ->{
+                prevX = x
+                prevY = y
             }
-            MotionEvent.ACTION_MOVE -> {
-                if(e.pointerCount == 2){
-                    val x1 = e.getX(0)
-                    val y1 = e.getY(0)
-                    val x2 = e.getX(1)
-                    val y2 = e.getY(1)
-                    println("TEST")
-                    distance = sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1))
-                    println("($x1, $y1), ($x2, $y2), $distance")
+            MotionEvent.ACTION_MOVE ->{
+                if (event.pointerCount == 2) {
+                    val x1 = event.getX(0)
+                    val y1 = event.getY(0)
+                    val x2 = event.getX(1)
+                    val y2 = event.getY(1)
+
+                    // 현재 거리와 전의 거리의 차를 갖고 확대하는 지 축소하는 지 계산
+                    val curDistance = getDistance(x1, y1, x2, y2)
+
+                    if(prevDistance > curDistance ){
+                        realZ += zoom
+                    }else if (prevDistance < curDistance && realZ > zoom){
+                        realZ -= zoom
+                    }
+
+                    prevDistance = curDistance
                 }else{
-                    moveX = e.x / 10
-                    moveY = e.y / 10
-                    println("$moveX, $moveY")
-                    requestRender()
+                    val moveX = prevX - x
+                    val moveY =  y - prevY
+                    prevX = x
+                    prevY = y
+                    realX += moveX / moveSpeed
+                    realY += moveY / moveSpeed
                 }
-                requestRender()
             }
         }
         return true
+    }
+
+    private fun getDistance(x1: Float, y1: Float, x2: Float, y2: Float): Float{
+        return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1))
     }
 }

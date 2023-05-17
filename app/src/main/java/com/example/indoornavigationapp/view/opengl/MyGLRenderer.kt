@@ -3,96 +3,66 @@ package com.example.indoornavigationapp.view.opengl
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
-import com.example.indoornavigationapp.octagonObject
-import com.example.indoornavigationapp.roadsArray
-import com.example.indoornavigationapp.soccerFieldObject
+
+import com.example.indoornavigationapp.mapComponentList
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
-import kotlin.collections.ArrayList
+
 
 class MyGLRenderer : GLSurfaceView.Renderer {
 
-
-    private lateinit var ground: Square
-    private lateinit var mOctagon: Octagon
-
+    // vPMatrix는 "Model View Projection Matrix"의 약어입니다
     private val vPMatrix = FloatArray(16)
     private val projectionMatrix = FloatArray(16)
     private val viewMatrix = FloatArray(16)
 
-    private val loadList = ArrayList<Square>()
+    var polygonList = ArrayList<Polygon>()
 
-    override fun onSurfaceCreated(p0: GL10?, p1: EGLConfig?) {
+    // 환경 설정을 위해 초기에 한 번 호출
+    override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
+        // Set the background frame color
+        GLES20.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-        for (i in 0 until roadsArray.length()){
-            val roadObject = roadsArray.getJSONObject(i)
-            val point1 = roadObject.getJSONArray("point1")
-            val point2 = roadObject.getJSONArray("point2")
-            val point3 = roadObject.getJSONArray("point3")
-            val point4 = roadObject.getJSONArray("point4")
-            val loadElement = floatArrayOf(
-                (point1.getDouble(0) / 1000).toFloat(), (point1.getDouble(1) / 1000).toFloat(), (point1.getDouble(2) / 1000).toFloat(),
-                (point2.getDouble(0) / 1000).toFloat(), (point2.getDouble(1) / 1000).toFloat(), (point2.getDouble(2) / 1000).toFloat(),
-                (point3.getDouble(0) / 1000).toFloat(), (point3.getDouble(1) / 1000).toFloat(), (point3.getDouble(2) / 1000).toFloat(),
-                (point4.getDouble(0) / 1000).toFloat(), (point4.getDouble(1) / 1000).toFloat(), (point4.getDouble(2) / 1000).toFloat()
-            )
-            loadList.add(Square(loadElement))
+        for (mapComponent in mapComponentList) {
+            val polygonCoords = mapComponent.coordinates
+                .flatMap { it.map{ it / 1000f} }.toFloatArray()
+            val color = mapComponent.color
+            val drawOrder = mapComponent.drawOrder
+            polygonList.add(Polygon(polygonCoords, color, drawOrder))
         }
-
-        println(octagonObject.getJSONArray("point1").getDouble(0) / 1000)
-        val octagonElement = floatArrayOf(
-            (octagonObject.getJSONArray("point1").getDouble(0)/1000).toFloat(), (octagonObject.getJSONArray("point1").getDouble(1)/1000).toFloat(), (octagonObject.getJSONArray("point1").getDouble(2)/1000).toFloat(),
-            (octagonObject.getJSONArray("point2").getDouble(0)/1000).toFloat(), (octagonObject.getJSONArray("point2").getDouble(1)/1000).toFloat(), (octagonObject.getJSONArray("point2").getDouble(2)/1000).toFloat(),
-            (octagonObject.getJSONArray("point3").getDouble(0)/1000).toFloat(), (octagonObject.getJSONArray("point3").getDouble(1)/1000).toFloat(), (octagonObject.getJSONArray("point3").getDouble(2)/1000).toFloat(),
-            (octagonObject.getJSONArray("point4").getDouble(0)/1000).toFloat(), (octagonObject.getJSONArray("point4").getDouble(1)/1000).toFloat(), (octagonObject.getJSONArray("point4").getDouble(2)/1000).toFloat(),
-            (octagonObject.getJSONArray("point5").getDouble(0)/1000).toFloat(), (octagonObject.getJSONArray("point5").getDouble(1)/1000).toFloat(), (octagonObject.getJSONArray("point5").getDouble(2)/1000).toFloat(),
-            (octagonObject.getJSONArray("point6").getDouble(0)/1000).toFloat(), (octagonObject.getJSONArray("point6").getDouble(1)/1000).toFloat(), (octagonObject.getJSONArray("point6").getDouble(2)/1000).toFloat(),
-            (octagonObject.getJSONArray("point7").getDouble(0)/1000).toFloat(), (octagonObject.getJSONArray("point7").getDouble(1)/1000).toFloat(), (octagonObject.getJSONArray("point7").getDouble(2)/1000).toFloat(),
-            (octagonObject.getJSONArray("point8").getDouble(0)/1000).toFloat(), (octagonObject.getJSONArray("point8").getDouble(1)/1000).toFloat(), (octagonObject.getJSONArray("point8").getDouble(2)/1000).toFloat(),
-        )
-        mOctagon = Octagon(octagonElement)
-
-        val soccerFieldElement = floatArrayOf(
-            (soccerFieldObject.getJSONArray("point1").getDouble(0)/1000).toFloat(), (soccerFieldObject.getJSONArray("point1").getDouble(1)/1000).toFloat(), (soccerFieldObject.getJSONArray("point1").getDouble(2)/1000).toFloat(),
-            (soccerFieldObject.getJSONArray("point2").getDouble(0)/1000).toFloat(), (soccerFieldObject.getJSONArray("point2").getDouble(1)/1000).toFloat(), (soccerFieldObject.getJSONArray("point2").getDouble(2)/1000).toFloat(),
-            (soccerFieldObject.getJSONArray("point3").getDouble(0)/1000).toFloat(), (soccerFieldObject.getJSONArray("point3").getDouble(1)/1000).toFloat(), (soccerFieldObject.getJSONArray("point3").getDouble(2)/1000).toFloat(),
-            (soccerFieldObject.getJSONArray("point4").getDouble(0)/1000).toFloat(), (soccerFieldObject.getJSONArray("point4").getDouble(1)/1000).toFloat(), (soccerFieldObject.getJSONArray("point4").getDouble(2)/1000).toFloat(),
-        )
-        ground = Square(soccerFieldElement)
     }
 
-    override fun onSurfaceChanged(p0: GL10?, p1: Int, p2: Int) {
-        val width = p1
-        val height = p2
+    // 장치의 화면 방향 변실 시 호출
+    override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
         GLES20.glViewport(0, 0, width, height)
-        val ratio: Float = width.toFloat() / width.toFloat()
 
-        // this projection matrix is applied to object coordinates
-        // in the onDrawFrame() method
+        val ratio: Float = width.toFloat() / height.toFloat()
+
+        // 투영 행렬 구성, 투영 행렬은 3차원 공간의 물체를 2차원에 투영할 때 사용된다.
+        // x-왼쪽, 오른쪽  y-아래, 위 z-앞, 뒤
+//        Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1f, 1f, 3f, 7f)
         Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1f, 1f, 3f, 300000f)
 
     }
 
-    override fun onDrawFrame(p0: GL10?) {
-        GLES20.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    // 뷰를 다시 그릴 때 호출
+    override fun onDrawFrame(gl: GL10?) {
+        // Redraw background color
+        // 색상 버퍼를 비움
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
 
-        // Set the camera position (View matrix)
-        Matrix.setLookAtM(viewMatrix, 0, 225.057f + moveX, 159.636f+moveY , 1000f - distance, 225.057f + moveX, 159.636f+ moveY, 0f, 0f, 1.0f, 0.0f)
-//        Matrix.setLookAtM(viewMatrix, 0, 225.057f, 159.636f , 1000f, 225.057f, 159.636f, 0f, 0f, 1.0f, 0.0f)
-
-
-        // Calculate the projection and view transformation
+        // 카메라 위치 설정(보기 매트릭스)
+        // 이 행렬은 카메라가 (0, 0, 3)에 있고, 보고 있는 지점이 (0, 0, 0)에 있고, 위쪽이 (0, 1, 0)에 있는 것처럼 3차원 공간의 물체를 봅니다.
+//        Matrix.setLookAtM(viewMatrix, 0, 0f, 0f, 3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
+        Matrix.setLookAtM(viewMatrix, 0, realX, realY , realZ, realX, realY, 0f, 0f, 1.0f, 0.0f)
+        // 투영 및 뷰 변환 계산
         Matrix.multiplyMM(vPMatrix, 0, projectionMatrix, 0, viewMatrix, 0)
 
-        var octagonColor = floatArrayOf(0.9f, 0.9f, 0.9f, 1.0f)
-        mOctagon.draw(vPMatrix,octagonColor)
-        var groundColor = floatArrayOf(0.63671875f, 0.76953125f, 0.22265625f, 1.0f)
-        ground.draw(vPMatrix, groundColor)
-        var loadColor = floatArrayOf(0.6f, 0.6f, 0.6f, 1.0f)
-        for(load in loadList){
-            load.draw(vPMatrix, loadColor)
+        // 지도 그리는 부분
+        for(polygon in polygonList){
+            polygon.draw(vPMatrix)
         }
+
         GLES20.glFlush()
     }
 }

@@ -38,7 +38,8 @@ class CameraFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCall
     CameraBridgeViewBaseImpl.MyCvCameraViewListener2, TagDetectionListener {
 
     var binding: FragmentCameraBinding? = null
-    private lateinit var glView: MyGLSurfaceView
+
+    private var glView: MyGLSurfaceView? = null
     private var mOpenCvCameraView: ApriltagCamera2View? = null
     private val permissionList = Manifest.permission.CAMERA
     private var mSize: Size = Size(-1, -1)
@@ -120,7 +121,9 @@ class CameraFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCall
         }
 
         glView = MyGLSurfaceView(requireContext())
+
         binding?.openglContainer?.addView(glView)
+
             return binding?.root
     }
 
@@ -162,7 +165,6 @@ class CameraFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCall
     override fun onPause() {
         super.onPause()
         mOpenCvCameraView?.disableView()
-        glView.onPause()
 
     }
 
@@ -175,7 +177,6 @@ class CameraFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCall
             Log.d(TAG, "onResum :: OpenCV library found inside package. Using it!")
             mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS)
         }
-        glView.onResume()
     }
 
     override fun onTagDetect(aprilDetection: ArrayList<ApriltagDetection>) {
