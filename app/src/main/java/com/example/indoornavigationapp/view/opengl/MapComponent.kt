@@ -8,7 +8,11 @@ class MapComponent(name: String, drawOrder: ShortArray, color: FloatArray, floor
     var coordinates: Array<FloatArray> = coordinates
 
     override fun toString(): String {
-        return "MapComponent(name='$name', drawOrder=${drawOrder.contentToString()}, color=${color.contentToString()}, floor=$floor, coordinates=${coordinates.contentToString()})"
+        return "MapComponent(name='$name', " +
+                "drawOrder=${drawOrder.contentToString()}, " +
+                "color=${color.contentToString()}," +
+                " floor=$floor," +
+                " coordinates=${coordinates.contentToString()
+                })"
     }
-
 }

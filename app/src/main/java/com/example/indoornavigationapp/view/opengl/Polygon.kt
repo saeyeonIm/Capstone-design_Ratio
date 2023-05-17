@@ -7,6 +7,7 @@ import java.nio.FloatBuffer
 import java.nio.ShortBuffer
 
 // number of coordinates per vertex in this array
+// x, y, z -> 3
 const val COORDS_PER_VERTEX = 3
 
 class Polygon(coordinates: FloatArray, color: FloatArray, drawOrder: ShortArray) {
@@ -118,7 +119,7 @@ class Polygon(coordinates: FloatArray, color: FloatArray, drawOrder: ShortArray)
             // glVertexAttribPointer 함수는 OpenGL ES에서 특정 속성에 대한 데이터 형식과 메모리 위치를 설정하는 데 사용
             GLES20.glVertexAttribPointer(
                 it, //속성의 위치
-                com.example.indoornavigationapp.view.opengl.testPolygon.COORDS_PER_VERTEX, //속성당 구성 요소 수
+                COORDS_PER_VERTEX, //속성당 구성 요소 수
                 GLES20.GL_FLOAT, //각 구성 요소의 데이터 유형
                 false, //데이터가 정규화되었는지 여부
                 vertexStride, //속성 데이터의 버퍼 오프셋
@@ -138,10 +139,6 @@ class Polygon(coordinates: FloatArray, color: FloatArray, drawOrder: ShortArray)
             // 투영 및 뷰 변환을 셰이더로 전달
             GLES20.glUniformMatrix4fv(vPMatrixHandle, 1, false, mvpMatrix, 0)
 
-            // Draw the triangle
-            GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount)
-
-
             // Draw
             if (drawOrder != null) {
                 GLES20.glDrawElements(
@@ -151,6 +148,7 @@ class Polygon(coordinates: FloatArray, color: FloatArray, drawOrder: ShortArray)
                     drawListBuffer
                 )
             }else{
+                // 삼각형 그리기
                 GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount)
             }
 

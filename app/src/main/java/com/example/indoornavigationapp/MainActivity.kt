@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         ApriltagNative.apriltag_init("tagStandard41h12", 2, 4.0, 0.0, 1)
 
         // 지도 구성 요소 리스트
-        mapComponentList = getMapComponentList()
+        mapComponentList = getMapComponentListFromJson("jsons/coordinate.json")
     }
 
     companion object {
@@ -68,11 +68,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Json 파일 읽어서 객체화하는 코드
-    private fun getMapComponentList(): List<MapComponent>{
+    private fun getMapComponentListFromJson(path: String): List<MapComponent>{
         val list = mutableListOf<MapComponent>()
         val gson = Gson()
         try {
-            val inputStream = assets.open("jsons/coordinate.json")
+            val inputStream = assets.open(path)
             val buffer = ByteArray(inputStream.available())
             inputStream.read(buffer)
             inputStream.close()

@@ -4,8 +4,6 @@ import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import com.example.indoornavigationapp.mapComponentList
-import com.example.indoornavigationapp.view.opengl.testPolygon.Square
-import com.example.indoornavigationapp.view.opengl.testPolygon.Triangle
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -17,9 +15,7 @@ class MyGLRenderer : GLSurfaceView.Renderer {
     private val projectionMatrix = FloatArray(16)
     private val viewMatrix = FloatArray(16)
 
-    //
     var polygonList = ArrayList<Polygon>()
-
 
     // 환경 설정을 위해 초기에 한 번 호출
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
